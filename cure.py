@@ -20,7 +20,8 @@
     [WM3] -- Filename Watermarks
     [WM4] -- Timestamp Fingerprinting
     [WM5] -- CSS Watermark
-    [WM6] -- Image Metadata Watermarks"
+    [WM6] -- Image Metadata Watermarks
+    [WM7] -- eBook.de Watermark"
 '''
 
 import os
@@ -193,6 +194,16 @@ def wm6():
     print('\nOK')
 
 
+def wm7():
+    print('\n\n === Removing \'eBooks.de\' watermark (WM7) === \n\n')
+    if os.path.isfile("META-INF/cdp.info"):
+        print("[wm7] Removing file: META-INF/cdp.info")
+        os.remove("META-INF/cdp.info")
+    else:
+        print("[wm7] No eBooks.de watermark found")
+    print('\nOK')
+
+
 idx = 0
 
 
@@ -322,7 +333,6 @@ def clean():
     print('[clean] Cleaning temporary directory ...')
     shutil.rmtree(baseUrl)
 
-
 def help():
     print('cure.py -i <infected .epub> -o <destination>')
     print('cure.py -d <infected dir> -o <destination_dir>')
@@ -388,6 +398,7 @@ def cure_epub(infected, output):
     wm4()
     wm5()
     wm6()
+    wm7()
     buildEpub(output)
     clean()
 
