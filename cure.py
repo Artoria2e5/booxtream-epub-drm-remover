@@ -27,6 +27,7 @@ import shutil
 import sys, getopt
 import zipfile
 import hashlib
+from os.path import join, isfile, isdir, exists
 from bs4 import BeautifulSoup as bs
 from wand.image import Image
 
@@ -340,11 +341,11 @@ def main(argv):
 			os.makedirs(output)
 		if check_subdirs:
 			os.path.walk()
-		all_files = [f for f in os.path.listdir(infected_dir) if os.path.isfile(join(infected_dir, f))]
+		all_files = [f for f in os.listdir(infected_dir) if os.path.isfile(join(infected_dir, f))]
 		for file in all_files:
 			output_with_dir = os.path.join(output, file)
-			if os.path.splitext(file) == '.epub':
-				cure_epub(file, output_with_dir)
+			if os.path.splitext(file)[1] == '.epub':
+				cure_epub(os.path.join(infected_dir, file), output_with_dir)
 
 def check_subdirectories():
 	subdirs = raw_input('Should the Book Doctor check subdirectories? (y/N)')
