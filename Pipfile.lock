@@ -1,0 +1,47 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "069cdba3cff563f34204378d71d1ad4bc423be2ef197d32612ca4175dbcdf8ab"
+        },
+        "host-environment-markers": {
+            "implementation_name": "cpython",
+            "implementation_version": "3.6.2",
+            "os_name": "posix",
+            "platform_machine": "x86_64",
+            "platform_python_implementation": "CPython",
+            "platform_release": "4.9.0-6-amd64",
+            "platform_system": "Linux",
+            "platform_version": "#1 SMP Debian 4.9.88-1+deb9u1 (2018-05-07)",
+            "python_full_version": "3.6.2",
+            "python_version": "3.6",
+            "sys_platform": "linux"
+        },
+        "pipfile-spec": 6,
+        "requires": {},
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.python.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "beautifulsoup4": {
+            "hashes": [
+                "sha256:7015e76bf32f1f574636c4288399a6de66ce08fb7b2457f628a8d70c0fbabb11",
+                "sha256:11a9a27b7d3bddc6d86f59fb76afb70e921a25ac2d6cc55b40d072bd68435a76",
+                "sha256:808b6ac932dccb0a4126558f7dfdcf41710dd44a4ef497a0bb59a77f9f078e89"
+            ],
+            "version": "==4.6.0"
+        },
+        "wand": {
+            "hashes": [
+                "sha256:fb50d0ad4cad995f0b59b13f76bced22682ab80b4299084a2c3c535b225850c9",
+                "sha256:28e0454c9d16d69c5d5034918d96320d8f9f1377b4fdaf4944eec2f938c74704"
+            ],
+            "version": "==0.4.4"
+        }
+    },
+    "develop": {}
+}

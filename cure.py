@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
 	This file is an implementation of Institute of Biblio-Immunology's First Communique
 	(see https://pastebin.com/raw/E1xgCUmb)
@@ -46,7 +47,7 @@ def wm0(entry):
 
 	# Get filename of exlibris watermark
 	exlibrispage = soup.find("item", id="exlibrispage") 
-        print exlibrispage
+	print(exlibrispage)
 	if exlibrispage is not None:
 		exlibrispage_filename =  dict(exlibrispage.attrs)[u'href']
 		os.remove(os.path.join(prefix, exlibrispage_filename))
@@ -301,25 +302,58 @@ def clean():
 	print '[clean] Cleaning temporary directory ...'
 	shutil.rmtree(baseUrl)
 
+def help():
+	print 'cure.py -i <infected .epub> -o <destination>'
+	print 'cure.py -d <infected dir> -o <destination_dir>'
+
 def main(argv):
+	infected_dir = ''
 	infected = ''
 	output = ''
 	try:
-		opts, args = getopt.getopt(argv,"hi:o:", ["in=", "out="])
+		opts, args = getopt.getopt(argv,"hi:o:", ["dir", "in=", "out="])
 	except getopt.GetoptError:
-		print 'cure.py -i <infected .epub> -o <destination>'
+		help()
 		sys.exit(2)
 	if len(opts) == 0:
-		print 'cure.py -i <infected .epub> -o <destination>'
+		help()
 		sys.exit(2)
 	for opt, arg in opts:
+		print arg
 		if opt in ("-h", "--help"):
-			print 'cure.py -i <infected .epub> -o <destination>'
+			help()
+			sys.exit(0)
 		if opt in ("-i", "--in"):
-			infected = arg
+			print os.path.isfile(arg)
+			if os.path.isfile(arg):
+				infected = arg
+			elif os.path.isdir(arg):
+				infected_dir = arg
 		if opt in ("-o", "--out"):
 			output = arg
-	print 'Curing {0} ...'.format(infected)
+	if infected:
+		print 'Curing {0} ...'.format(infected)
+		cure_epub(infected, output)
+	elif infected_dir:
+		check_subdirs = check_subdirectories()
+		if not os.path.exists(output):
+			os.makedirs(output)
+		if check_subdirs:
+			os.path.walk()
+		all_files = [f for f in os.path.listdir(infected_dir) if os.path.isfile(join(infected_dir, f))]
+		for file in all_files:
+			output_with_dir = os.path.join(output, file)
+			if os.path.splitext(file) == '.epub':
+				cure_epub(file, output_with_dir)
+
+def check_subdirectories():
+	subdirs = raw_input('Should the Book Doctor check subdirectories? (y/N)')
+	if subdirs is not 'y' and subdirs is not 'Y':
+		return False
+	else:
+		return True
+
+def cure_epub(infected, output):
 	extract(infected)
 	os.chdir(baseUrl)
 	entry = parseContainer()
@@ -332,7 +366,6 @@ def main(argv):
 	wm6()
 	buildEpub(output)
 	clean()
-
 
 if __name__ == "__main__":
 	main(sys.argv[1:])
