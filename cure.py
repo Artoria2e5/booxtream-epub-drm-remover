@@ -36,10 +36,10 @@ prefix = ""
 
 def wm0(entry):
 	global prefix
-	print '\n\n === Removing \'Ex Libris\' watermark (WM0) === \n\n'
+	print('\n\n === Removing \'Ex Libris\' watermark (WM0) === \n\n')
 
 	# Set prefix as the root ePub directory; makes files relative to cwd
-	print entry
+	print(entry)
 	if "/" in entry:
 		prefix = os.path.join(entry.split("/")[0])
 
@@ -50,20 +50,20 @@ def wm0(entry):
 	exlibrispage = soup.find("item", id="exlibrispage") 
 	print(exlibrispage)
 	if exlibrispage is not None:
-		exlibrispage_filename =  dict(exlibrispage.attrs)[u'href']
+		exlibrispage_filename =  dict(exlibrispage.attrs)['href']
 		os.remove(os.path.join(prefix, exlibrispage_filename))
 		references = searchDirectoryForString('.', "exlibrispage")
 		for reference in references:
 			soup, tags = findAttrInFile(reference, "exlibrispage")
 			removeTagsFromFile(reference, soup, tags)
 	else:
-		print '\nEx Libris watermark not found'
+		print('\nEx Libris watermark not found')
 
 	# Get filename of exlibris watermark
 	exlibris = soup.find("item", id="exlibris") 
-        print exlibris
+	print(exlibris)
 	if exlibris is not None:
-		exlibris_filename =  dict(exlibris.attrs)[u'href']
+		exlibris_filename =  dict(exlibris.attrs)['href']
 		os.remove(os.path.join(prefix, exlibris_filename))
 		references = searchDirectoryForString('.', "exlibris")
 		for reference in references:
@@ -76,50 +76,50 @@ def wm0(entry):
 			soup, tags = findAttrInFile(reference, "BooXtream")
 			removeTagsFromFile(reference, soup, tags)
 	else:
-		print '\nEx Libris watermark not found'
-	print '\nOK'
+		print('\nEx Libris watermark not found')
+	print('\nOK')
 
 def wm1():
 	global prefix
-	print '\n\n === Removing \'Disclaimer\' watermark (WM1) === \n\n'
+	print('\n\n === Removing \'Disclaimer\' watermark (WM1) === \n\n')
 	disclaimer = ""
 	for root, dirnames, filenames in os.walk("."):
 		for filename in filenames:
 			if "disclaimer" in filename:
-				print "[wm1] Found disclaimer file: {0}".format('/'.join([root, filename]))
+				print("[wm1] Found disclaimer file: {0}".format('/'.join([root, filename])))
 				disclaimer = '/'.join([root, filename])
 	if disclaimer == "":
-		print '\nNo Disclaimer file found'
+		print('\nNo Disclaimer file found')
 		return
 	references = searchDirectoryForString('.', disclaimer)
 	for reference in references:
 		soup, tags = findAttrInFile(reference, disclaimer)
 		removeTagsFromFile(reference, soup, tags)
 	os.remove(disclaimer)
-	print '\nOK'
+	print('\nOK')
 
 def wm2():
 	global prefix
-	print '\n\n === Removing \'licensing\' watermark (WM2) === \n\n'
+	print('\n\n === Removing \'licensing\' watermark (WM2) === \n\n')
 	references = searchDirectoryForString('.', "is licensed to")
 	for reference in references:
 		soup, tags = findTagsInFile(reference)
 		for tag in tags:
 			if len(tag.findChildren()) == 0: # No <p> with other <p> inside them
 				if "is licensed to" in str(tag):
-					print "Found match in file: {0}".format(tag)
+					print("Found match in file: {0}".format(tag))
 					removeTagFromFile(reference, soup, tag)
-	print '\nOK'
+	print('\nOK')
 
 def wm3(entry):
 	global prefix
-	print '\n\n === Removing \'filename\' watermark (WM3) === \n\n'
+	print('\n\n === Removing \'filename\' watermark (WM3) === \n\n')
 	handler = open(entry).read()
 	soup = bs(handler, "html.parser")
 	items = soup.findAll("item")
 	for item in items:
 		rand_name = deterministicNameGen()
-		href = dict(item.attrs)[u'href']
+		href = dict(item.attrs)['href']
 		filetype = href.split('.')[-1]
 		rand_name += '.'
 		rand_name += filetype
@@ -128,61 +128,58 @@ def wm3(entry):
 			href_path = '/'.join(href.split("/")[:-1])
 			href = ''.join(href.split("/")[-1])
 		new_url = os.path.join(href_path, rand_name)
-		print '[wm3] Renaming {0} to {1}'.format(href, new_url)
+		print('[wm3] Renaming {0} to {1}'.format(href, new_url))
 		references = searchDirectoryForString('.', href)
 		for reference in references:
 			replaceStringInFile(reference, href.split("/")[-1], rand_name.split("/")[-1])
 		renameFile(os.path.join(prefix, href_path, href), os.path.join(prefix, href_path, rand_name))
-	print '\nOK'
+	print('\nOK')
 
 def wm4():
-	print '\n\n === Removing \'timestamp\' watermark (WM4) === \n\n'
+	print('\n\n === Removing \'timestamp\' watermark (WM4) === \n\n')
 	# Timestamp WM - taken care of when unzipping / repackaging :-)
-	print '\nOK'
+	print('\nOK')
 
 def wm5():
 	global prefix
-	print '\n\n === Removing \'boekstaaf\' watermark (WM5) === \n\n'
+	print('\n\n === Removing \'boekstaaf\' watermark (WM5) === \n\n')
 	css_path = ""
 	for root, dirnames, filenames in os.walk("."):
 		for filename in filenames:
 			if ".css" in filename:
-				print "[wm5] Found CSS file: {0}".format(filename)
+				print("[wm5] Found CSS file: {0}".format(filename))
 				css_path = ''.join([root, "/", filename])
-	f = open(css_path, "rw")
-	tmp = ""
-	for line in f:
-		if "boekstaaf" not in line:
-			tmp += line
-	f.close()
-	f = open(css_path, "w")
-	f.write(tmp)
-	f.close()
-	print '\nOK'
+	with open(css_path, "a+") as f:
+		tmp = ""
+		for line in f:
+			if "boekstaaf" not in line:
+				tmp += line
+		f.write(tmp)
+	print('\nOK')
 
 def wm6():
-	print '\n\n === Removing \'exif\' watermark (WM6) === \n\n'
+	print('\n\n === Removing \'exif\' watermark (WM6) === \n\n')
 	jpg_paths = []
 	png_paths = []
 	for root, dirnames, filenames in os.walk("."):
 		for filename in filenames:
 			if ".jpg" in filename:
-				print "[wm6] Found jpg file: {0}".format(filename)
+				print("[wm6] Found jpg file: {0}".format(filename))
 				jpg_paths.append(os.path.join(root, filename))
 			if ".png" in filename:
-				print "[wm6] Found png file: {0}".format(filename)
+				print("[wm6] Found png file: {0}".format(filename))
 				png_paths.append(os.path.join(root,filename))
 	for path in jpg_paths:
-		print "[wm6] Removing exif from {0}".format(path)
+		print("[wm6] Removing exif from {0}".format(path))
 		with Image(filename=path) as img:
 			img.strip()
 			img.save(filename=path)
 	for path in png_paths:
-		print "[wm6] Removing metadata from {0}".format(path)
+		print("[wm6] Removing metadata from {0}".format(path))
 		with Image(filename=path) as img:
 			img.strip()
 			img.save(filename=path)
-	print '\nOK'
+	print('\nOK')
 	
 idx = 0
 def deterministicNameGen():
@@ -199,32 +196,32 @@ def deterministicNameGen():
 	July 2008, Eremo, Italy
 	'''
 	global idx
-	name = hashlib.md5(''.join([string, str(idx)]))
+	name = hashlib.md5(''.join([string, str(idx)]).encode('utf-8'))
 	idx += 1
 	return name.hexdigest()[0:20]
 
 
 def searchDirectoryForString(path, match):
 	found = []
-	print '[searchDirectoryForString] Searching {0} for {1}'.format(path, match)
+	print('[searchDirectoryForString] Searching {0} for {1}'.format(path, match))
 	for path, dirs, files in os.walk(path):
 		for file in files:
 			fullpath = os.path.join(path, file)
-			f = open(fullpath, 'r')
+			f = open(fullpath, 'r', errors='ignore')
 			contents = f.read()
 			if str(match) in contents:
-				print '[searchDirectoryForString] Found match in file {0}'.format(fullpath)
+				print('[searchDirectoryForString] Found match in file {0}'.format(fullpath))
 				found.append(fullpath)
 	return found
 
 def replaceStringInFile(path, match, replace):
-	print '[replaceStringInFile] Replacing {0} with {1} in {2}'.format(match, replace, path)
+	print('[replaceStringInFile] Replacing {0} with {1} in {2}'.format(match, replace, path))
 	f = open(path).read()
-	f = f.replace(match.encode('utf-8'), replace.encode('utf-8'))
+	f = f.replace(match, replace)
 	writeToFile(path, f)
 
 def renameFile(path, dst):
-	print '[renameFile] Renaming {0} to {1}'.format(path, dst)
+	print('[renameFile] Renaming {0} to {1}'.format(path, dst))
 	os.rename(path, dst)
 
 def findTagsInFile(path, tag=""):
@@ -243,20 +240,20 @@ def findAttrInFile(path, match):
 	for tag in soup.findAll():
 		attrs = dict(tag.attrs)
 		if match in str(attrs):
-			print '[findAttrInFile] Found match in {0}'.format(tag)
+			print('[findAttrInFile] Found match in {0}'.format(tag))
 			tags.append(tag)
 	return soup, tags
 
 def removeTagFromFile(path, soup, tags):
-	print '[removeTagFromFile] Removing {0} from {1}'.format(tags, path)
+	print('[removeTagFromFile] Removing {0} from {1}'.format(tags, path))
 	tags.extract()
-	writeToFile(path, soup.prettify().encode('utf-8'))
+	writeToFile(path, soup.prettify())
 
 def removeTagsFromFile(path, soup, tags):
-	print '[removeTagsFromFile] Removing {0} from {1}'.format(tags, path)
+	print('[removeTagsFromFile] Removing {0} from {1}'.format(tags, path))
 	for tag in tags:
 		tag.extract()
-	writeToFile(path, soup.prettify().encode('utf-8'))
+	writeToFile(path, soup.prettify())
 
 
 
@@ -265,8 +262,8 @@ def parseContainer():
 	handler = open(container).read()
 	soup = bs(handler, "html.parser")
 	rootfile = soup.find('rootfile')
-	path = dict(rootfile.attrs)[u'full-path']
-	print '[parseContainer] Found entrypoint to ePub:', path
+	path = dict(rootfile.attrs)['full-path']
+	print('[parseContainer] Found entrypoint to ePub:', path)
 	return path
 
 def extract(path):
@@ -280,7 +277,7 @@ def writeToFile(path, content):
 	f.write(content)
 
 def buildEpub(path):
-	print '\n\n === Rebuilding ePub === \n\n'
+	print('\n\n === Rebuilding ePub === \n\n')
 	os.chdir("../")
 	try:
 		os.remove(path)
@@ -288,24 +285,24 @@ def buildEpub(path):
 		pass
 	build = zipfile.ZipFile(path, 'w', zipfile.ZIP_DEFLATED)
 	os.chdir(baseUrl)
-	print '[buildEpub] Adding mimetype to ePub ...'
+	print('[buildEpub] Adding mimetype to ePub ...')
 	build.write("mimetype")
 	for root, dirs, files in os.walk("."):
 		for file in files:
 			if "mimetype" not in file:
 				path = os.path.join(root, file)
-				print '[buildEpub] Writing {0} to ePub ...'.format(path)
+				print('[buildEpub] Writing {0} to ePub ...'.format(path))
 				zpth = path[len(".")+len(os.sep):]
 				build.write(path, zpth)
 	os.chdir("..")
 
 def clean():
-	print '[clean] Cleaning temporary directory ...'
+	print('[clean] Cleaning temporary directory ...')
 	shutil.rmtree(baseUrl)
 
 def help():
-	print 'cure.py -i <infected .epub> -o <destination>'
-	print 'cure.py -d <infected dir> -o <destination_dir>'
+	print('cure.py -i <infected .epub> -o <destination>')
+	print('cure.py -d <infected dir> -o <destination_dir>')
 
 def main(argv):
 	infected_dir = ''
@@ -320,12 +317,12 @@ def main(argv):
 		help()
 		sys.exit(2)
 	for opt, arg in opts:
-		print arg
+		print(arg)
 		if opt in ("-h", "--help"):
 			help()
 			sys.exit(0)
 		if opt in ("-i", "--in"):
-			print os.path.isfile(arg)
+			print(os.path.isfile(arg))
 			if os.path.isfile(arg):
 				infected = arg
 			elif os.path.isdir(arg):
@@ -333,7 +330,7 @@ def main(argv):
 		if opt in ("-o", "--out"):
 			output = arg
 	if infected:
-		print 'Curing {0} ...'.format(infected)
+		print('Curing {0} ...'.format(infected))
 		cure_epub(infected, output)
 	elif infected_dir:
 		check_subdirs = check_subdirectories()
@@ -348,7 +345,7 @@ def main(argv):
 				cure_epub(os.path.join(infected_dir, file), output_with_dir)
 
 def check_subdirectories():
-	subdirs = raw_input('Should the Book Doctor check subdirectories? (y/N)')
+	subdirs = input('Should the Book Doctor check subdirectories? (y/N)')
 	if subdirs is not 'y' and subdirs is not 'Y':
 		return False
 	else:

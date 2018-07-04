@@ -9,6 +9,10 @@ name = "pypi"
 
 "beautifulsoup4" = "*"
 wand = "*"
+"pyqt5" = "*"
+six = "*"
+future = "*"
+pyinstaller = "*"
 
 
 [dev-packages]
