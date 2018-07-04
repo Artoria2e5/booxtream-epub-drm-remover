@@ -179,7 +179,7 @@ def wm6():
                 jpg_paths.append(os.path.join(root, filename))
             if ".png" in filename:
                 print("[wm6] Found png file: {0}".format(filename))
-                png_paths.append(os.path.join(root,filename))
+                png_paths.append(os.path.join(root, filename))
     for path in jpg_paths:
         print("[wm6] Removing exif from {0}".format(path))
         with Image(filename=path) as img:
