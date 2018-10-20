@@ -32,8 +32,6 @@ import hashlib
 from os.path import join, isfile, isdir, exists
 from bs4 import BeautifulSoup as bs
 from wand.image import Image
-from PyQt5.QtWidgets import QWidget, QDesktopWidget, QApplication
-from PyQt5.QtGui import QIcon
 
 baseUrl = ".tmp/"
 prefix = ""
@@ -336,15 +334,15 @@ def main(argv):
         opts, args = getopt.getopt(argv,"hi:o:", ["dir", "in=", "out="])
     except getopt.GetoptError:
         help()
-        sys.exit(2)
+        return 2
     if len(opts) == 0:
         help()
-        sys.exit(2)
+        return 2
     for opt, arg in opts:
         print(arg)
         if opt in ("-h", "--help"):
             help()
-            sys.exit(0)
+            return 0
         if opt in ("-i", "--in"):
             print(os.path.isfile(arg))
             if os.path.isfile(arg):
@@ -391,32 +389,5 @@ def cure_epub(infected, output):
     buildEpub(output)
     clean()
 
-
-class DoctorWindow(QWidget):
-
-    def __init__(self):
-        super().__init__()
-        self.initUI()
-
-    def initUI(self):
-
-        self.setGeometry(300, 300, 300, 220)
-        self.center()
-        self.setWindowTitle('Icon')
-        self.setWindowIcon(QIcon('cross.png'))
-    
-        self.show()
-
-    def center(self):
-        
-        qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
 if __name__ == "__main__":
-    # main(sys.argv[1:])
-    
-    app = QApplication(sys.argv)
-    ex = DoctorWindow()
-    sys.exit(app.exec_())
+    sys.exit(main(sys.argv[1:]))
